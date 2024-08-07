@@ -1,0 +1,31 @@
+org: madelrio
+app: translate-api
+service: translate-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+functions:
+  getTranslate:
+    handler: src/handlers/getTranslate.getTranslateHandler
+    events:
+      - httpApi:
+          method: post
+          path: /
+package:
+  individually: true
+build:
+  esbuild:
+    bundle: true
+    minify: false
+    external:
+      - '@aws-sdk/client-s3'
+    exclude:
+      - '@aws-sdk/*'
+    packages: external
+    buildConcurrency: 3
+    sourcemap:
+      type: linked
+      setNodeOptions: true
+plugins:
+  - serverless-offline
