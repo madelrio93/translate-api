@@ -5,6 +5,12 @@ service: translate-api
 provider:
   name: aws
   runtime: nodejs20.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - translate:TranslateText
+      Resource: '*'
+    
 functions:
   getTranslate:
     handler: src/handlers/getTranslate.getTranslateHandler
@@ -12,8 +18,10 @@ functions:
       - httpApi:
           method: post
           path: /
+          
 package:
   individually: true
+
 build:
   esbuild:
     bundle: true
@@ -27,5 +35,6 @@ build:
     sourcemap:
       type: linked
       setNodeOptions: true
+      
 plugins:
   - serverless-offline
