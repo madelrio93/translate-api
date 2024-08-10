@@ -22,6 +22,15 @@ provider:
             - cognito-idp:AdminSetUserPassword
             - cognito-idp:AdminAddUserToGroup
           Resource: '*'
+        - Effect: Allow
+          Action: 
+          - 'dynamodb:PutItem'    
+          - 'dynamodb:Get*'    
+          - 'dynamodb:Scan'    
+          - 'dynamodb:Query'    
+          - 'dynamodb:UpdateItem'    
+          - 'dynamodb:DeleteItem'    
+          Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-favoriteTranslations-${sls:stage}"
 
 resources:
   Resources:
@@ -49,6 +58,23 @@ resources:
         IdTokenValidity: 5
         ExplicitAuthFlows:
           - 'USER_PASSWORD_AUTH'
+    FavoriteTranslationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-favoriteTranslations-${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S 
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 functions:
   getTranslate:
