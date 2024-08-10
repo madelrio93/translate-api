@@ -11,7 +11,7 @@ export const getTranslate = async ({
   text,
   target,
   source,
-}: Types.TranslateParams): Promise<TranslateTextCommandOutput> => {
+}: Type.TranslateParams): Promise<TranslateTextCommandOutput> => {
   const params: TranslateTextCommandInput = {
     Text: text,
     SourceLanguageCode: source ?? 'auto',

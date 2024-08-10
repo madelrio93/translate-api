@@ -13,8 +13,8 @@
   "author": "Marcelo del Rio",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-translate": "^3.624.0",
-    "aws-sdk": "^2.1669.0"
+    "@aws-sdk/client-cognito-identity-provider": "^3.625.0",
+    "@aws-sdk/client-translate": "^3.624.0"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.38.0",
