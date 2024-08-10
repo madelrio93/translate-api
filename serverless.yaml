@@ -63,7 +63,12 @@ functions:
       - httpApi:
           method: post
           path: /register
-
+  login:
+    handler: src/handlers/login.loginHandler
+    events:
+      - httpApi:
+          method: post
+          path: /login
 package:
   individually: true
 

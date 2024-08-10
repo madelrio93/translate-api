@@ -1,4 +1,8 @@
-import { cognitoClient, createUserCommand } from '../lib/providers';
+import {
+  cognitoClient,
+  createUserCommand,
+  signInUserCommand,
+} from '../lib/providers';
 
 class AuthService {
   public async registerUser({
@@ -28,6 +32,28 @@ class AuthService {
         ],
       }),
     );
+  }
+
+  public async loginUser({
+    email,
+    password,
+  }: Pick<Type.User, 'email' | 'password'>) {
+    const res = await cognitoClient.send(
+      new signInUserCommand({
+        ClientId: process.env.COGNITO_USER_POOL_CLIENT_ID,
+        AuthFlow: 'USER_PASSWORD_AUTH',
+        AuthParameters: {
+          USERNAME: email,
+          PASSWORD: password,
+        },
+      }),
+    );
+
+    if (!res.AuthenticationResult) throw new Error();
+
+    const { AccessToken, ExpiresIn } = res.AuthenticationResult;
+
+    return { AccessToken, ExpiresIn };
   }
 }
 

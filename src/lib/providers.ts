@@ -1,6 +1,7 @@
 import {
   CognitoIdentityProviderClient,
-  SignUpCommand
+  InitiateAuthCommand,
+  SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 
 const cognitoClient = new CognitoIdentityProviderClient({
@@ -8,5 +9,6 @@ const cognitoClient = new CognitoIdentityProviderClient({
 });
 
 const createUserCommand = SignUpCommand;
+const signInUserCommand = InitiateAuthCommand;
 
-export { cognitoClient, createUserCommand };
+export { cognitoClient, createUserCommand, signInUserCommand };
