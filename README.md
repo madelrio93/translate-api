@@ -21,7 +21,7 @@ This project provides an API for translating text and saving favorite translatio
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/translate-api.git
+   git clone https://github.com/madelrio93/translate-api.git
    cd translate-api
    ```
 
