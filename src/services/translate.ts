@@ -3,7 +3,7 @@ import {
   ddbDocClient,
   DeleteCommand,
   PutCommand,
-  QueryCommand,
+  ScanCommand,
 } from '../lib/providers/db';
 import {
   translateClient,
@@ -27,9 +27,9 @@ class TranslateService {
 
   public async getFavoritesByUser(userId: string) {
     const res = await ddbDocClient.send(
-      new QueryCommand({
+      new ScanCommand({
         TableName: process.env.FAV_TRANSLATE_TABLE,
-        KeyConditionExpression: 'userId = :userId',
+        FilterExpression: 'userId = :userId',
         ExpressionAttributeValues: {
           ':userId': userId,
         },
