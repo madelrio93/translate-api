@@ -11,8 +11,17 @@ provider:
         - translate:TranslateText
       Resource: '*'
   environment:
+    FAV_TRANSLATE_TABLE: ${self:service}-favoriteTranslations-${sls:stage}
     COGNITO_USER_POOL_ID: { Ref: CognitoUserPool }
     COGNITO_USER_POOL_CLIENT_ID: { Ref: CognitoUserPoolClient }
+  httpApi:
+    cors: true
+    authorizers: 
+      userAuthoriser:
+        identitySource: $request.header.Authorization
+        issuerUrl: {"Fn::Join": ["", ["https://cognito-idp.us-east-1.amazonaws.com/", { Ref: CognitoUserPool }]]}
+        audience: { Ref: CognitoUserPoolClient }
+
   iam:
     role:
       statements:
@@ -23,14 +32,14 @@ provider:
             - cognito-idp:AdminAddUserToGroup
           Resource: '*'
         - Effect: Allow
-          Action: 
-          - 'dynamodb:PutItem'    
-          - 'dynamodb:Get*'    
-          - 'dynamodb:Scan'    
-          - 'dynamodb:Query'    
-          - 'dynamodb:UpdateItem'    
-          - 'dynamodb:DeleteItem'    
-          Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-favoriteTranslations-${sls:stage}"
+          Action:
+            - 'dynamodb:PutItem'
+            - 'dynamodb:Get*'
+            - 'dynamodb:Scan'
+            - 'dynamodb:Query'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:DeleteItem'
+          Resource: 'arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-favoriteTranslations-${sls:stage}'
 
 resources:
   Resources:
@@ -65,16 +74,12 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: userId
-            AttributeType: S 
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: userId
-            KeyType: RANGE
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 2
+          WriteCapacityUnits: 2
 
 functions:
   getTranslate:
@@ -95,6 +100,14 @@ functions:
       - httpApi:
           method: post
           path: /login
+  getFavoriteUserTranslate:
+    handler:  src/handlers/getFavoriteUserTranslate.getFavoriteUserTranslateHandler
+    events:
+      - httpApi:
+          method: get
+          path: /fav
+          authorizer: 
+            name: userAuthoriser
 package:
   individually: true
 

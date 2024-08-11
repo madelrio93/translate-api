@@ -1,21 +1,37 @@
-import { TranslateTextCommandOutput } from '@aws-sdk/client-translate';
+import { ddbDocClient, QueryCommand } from '../lib/providers/db';
 import {
-  TranslateClient,
+  translateClient,
   TranslateTextCommand,
   TranslateTextCommandInput,
-} from '@aws-sdk/client-translate';
+} from '../lib/providers/translate';
 
-const translateClient = new TranslateClient({ region: 'us-east-1' });
+class TranslateService {
+  public async getTranslateText({
+    text,
+    target,
+    source,
+  }: Type.TranslateParams) {
+    const params: TranslateTextCommandInput = {
+      Text: text,
+      SourceLanguageCode: source ?? 'auto',
+      TargetLanguageCode: target,
+    };
+    return await translateClient.send(new TranslateTextCommand(params));
+  }
 
-export const getTranslate = async ({
-  text,
-  target,
-  source,
-}: Type.TranslateParams): Promise<TranslateTextCommandOutput> => {
-  const params: TranslateTextCommandInput = {
-    Text: text,
-    SourceLanguageCode: source ?? 'auto',
-    TargetLanguageCode: target,
-  };
-  return await translateClient.send(new TranslateTextCommand(params));
-};
+  public async getFavoritesByUser(userId: string) {
+    const res = await ddbDocClient.send(
+      new QueryCommand({
+        TableName: process.env.FAV_TRANSLATE_TABLE,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: {
+          ':userId': userId,
+        },
+      }),
+    );
+
+    return res.Items;
+  }
+}
+
+export const translateService = new TranslateService();

@@ -2,7 +2,7 @@ import {
   cognitoClient,
   createUserCommand,
   signInUserCommand,
-} from '../lib/providers';
+} from '../lib/providers/cognito';
 
 class AuthService {
   public async registerUser({

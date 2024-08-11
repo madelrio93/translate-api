@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { getTranslate } from '../services/translate';
+import { translateService } from '../services/translate';
 
 export const getTranslateHandler = async (
   event: APIGatewayProxyEvent,
@@ -12,11 +12,12 @@ export const getTranslateHandler = async (
     if (text.length > 1000)
       throw new Error('Text cannot exceed 1000 characters');
 
-    const { TranslatedText: translatedText } = await getTranslate({
-      text,
-      target,
-      source,
-    });
+    const { TranslatedText: translatedText } =
+      await translateService.getTranslateText({
+        text,
+        target,
+        source,
+      });
 
     return {
       statusCode: 200,
