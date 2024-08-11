@@ -1,6 +1,9 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { jwtValidate } from '../lib/utils/jwtValidate';
 import { translateService } from '../services/translate';
+import { ERRORS } from '../utils/constants';
+import { handleErrors } from '../utils/handleErrors';
+import { successResponse } from '../utils/response';
 
 export const addFavoriteUserTranslateHandler = async (
   event: APIGatewayProxyEvent,
@@ -9,23 +12,15 @@ export const addFavoriteUserTranslateHandler = async (
     const token = event.headers.authorization;
     const body = event.body ? JSON.parse(event.body) : null;
 
-    if (!token) throw new Error('Authorization token is missing');
-    if (!body) throw new Error('Missing request body');
+    if (!token) throw new Error(ERRORS.AUTHORIZATION_TOKEN_MISSING);
+    if (!body) throw new Error(ERRORS.MISSING_REQUEST_BODY);
 
     const userId = await jwtValidate(token);
     const data = await translateService.addFavoriteByUser(userId, body);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        data,
-      }),
-    };
+    return successResponse(200, { data });
   } catch (error: any) {
     console.log(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error.message }),
-    };
+    return handleErrors(error);
   }
 };

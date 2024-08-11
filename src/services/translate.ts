@@ -10,6 +10,7 @@ import {
   TranslateTextCommand,
   TranslateTextCommandInput,
 } from '../lib/providers/translate';
+import { ERRORS } from '../utils/constants';
 
 class TranslateService {
   public async getTranslateText({
@@ -54,7 +55,7 @@ class TranslateService {
       }),
     );
 
-    if (!res) throw new Error('Failed to add fav translate');
+    if (!res) throw new Error(ERRORS.FAILED_TO_ADD_FAV);
 
     return fav;
   }
@@ -69,7 +70,7 @@ class TranslateService {
       }),
     );
 
-    if (!res) throw new Error('Failed to remove fav translate');
+    if (!res) throw new Error(ERRORS.FAILED_TO_REMOVE_FAV);
 
     return id;
   }

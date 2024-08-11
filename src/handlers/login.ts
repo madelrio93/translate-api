@@ -1,11 +1,14 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { authService } from '../services/auth';
+import { ERRORS } from '../utils/constants';
+import { handleErrors } from '../utils/handleErrors';
+import { successResponse } from '../utils/response';
 
 export const loginHandler = async (
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   try {
-    if (!event.body) throw new Error('Request body is missing');
+    if (!event.body) throw new Error(ERRORS.MISSING_REQUEST_BODY);
     const { email, password } = JSON.parse(event.body);
 
     const data = await authService.loginUser({
@@ -13,18 +16,12 @@ export const loginHandler = async (
       password,
     });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        data,
-        message: 'User sign in successfully',
-      }),
-    };
+    return successResponse(200, {
+      data,
+      message: ERRORS.USER_SIGN_IN_SUCCESS,
+    });
   } catch (error: any) {
     console.log(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error.message }),
-    };
+    return handleErrors(error);
   }
 };

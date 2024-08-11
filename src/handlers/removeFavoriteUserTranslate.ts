@@ -1,5 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { translateService } from '../services/translate';
+import { ERRORS } from '../utils/constants';
+import { handleErrors } from '../utils/handleErrors';
+import { successResponse } from '../utils/response';
 
 export const removeFavoriteUserTranslateHandler = async (
   event: APIGatewayProxyEvent,
@@ -7,21 +10,13 @@ export const removeFavoriteUserTranslateHandler = async (
   try {
     const body = event.body ? JSON.parse(event.body) : null;
 
-    if (!body) throw new Error('Missing request body');
+    if (!body) throw new Error(ERRORS.MISSING_REQUEST_BODY);
 
     const data = await translateService.removeFavoriteByUser(body.id);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        data,
-      }),
-    };
+    return successResponse(200, { data });
   } catch (error: any) {
     console.log(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error.message }),
-    };
+    return handleErrors(error);
   }
 };
