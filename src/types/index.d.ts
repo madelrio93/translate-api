@@ -3,6 +3,7 @@ declare namespace Type {
     text: string;
     target: string;
     source?: string;
+    translatedText?: string;
   }
 
   export interface User {

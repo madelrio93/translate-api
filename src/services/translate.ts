@@ -1,4 +1,5 @@
-import { ddbDocClient, QueryCommand } from '../lib/providers/db';
+import { randomUUID } from 'crypto';
+import { ddbDocClient, PutCommand, QueryCommand } from '../lib/providers/db';
 import {
   translateClient,
   TranslateTextCommand,
@@ -31,6 +32,26 @@ class TranslateService {
     );
 
     return res.Items;
+  }
+
+  public async addFavoriteByUser(userId: string, data: Type.TranslateParams) {
+    const fav = {
+      id: randomUUID(),
+      ...data,
+    };
+    const res = await ddbDocClient.send(
+      new PutCommand({
+        TableName: process.env.FAV_TRANSLATE_TABLE,
+        Item: {
+          userId,
+          ...fav,
+        },
+      }),
+    );
+
+    if (!res) throw new Error('Failed to add fav translate');
+
+    return fav;
   }
 }
 

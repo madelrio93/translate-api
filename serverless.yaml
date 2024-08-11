@@ -5,11 +5,6 @@ service: translate-api
 provider:
   name: aws
   runtime: nodejs20.x
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - translate:TranslateText
-      Resource: '*'
   environment:
     FAV_TRANSLATE_TABLE: ${self:service}-favoriteTranslations-${sls:stage}
     COGNITO_USER_POOL_ID: { Ref: CognitoUserPool }
@@ -25,6 +20,10 @@ provider:
   iam:
     role:
       statements:
+        - Effect: Allow
+          Action:
+            - translate:TranslateText
+          Resource: '*'
         - Effect: Allow
           Action:
             - cognito-idp:AdminCreateUser
@@ -106,6 +105,14 @@ functions:
       - httpApi:
           method: get
           path: /fav
+          authorizer: 
+            name: userAuthoriser
+  addFavoriteUserTranslate:
+    handler:  src/handlers/addFavoriteUserTranslate.addFavoriteUserTranslateHandler
+    events:
+      - httpApi:
+          method: post
+          path: /add
           authorizer: 
             name: userAuthoriser
 package:
