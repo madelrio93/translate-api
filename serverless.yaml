@@ -115,6 +115,14 @@ functions:
           path: /add
           authorizer: 
             name: userAuthoriser
+  removeFavoriteUserTranslate:
+    handler:  src/handlers/removeFavoriteUserTranslate.removeFavoriteUserTranslateHandler
+    events:
+      - httpApi:
+          method: post
+          path: /remove
+          authorizer: 
+            name: userAuthoriser
 package:
   individually: true
 

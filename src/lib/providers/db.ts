@@ -3,6 +3,7 @@ import {
   DynamoDBDocumentClient,
   QueryCommand,
   PutCommand,
+  DeleteCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { region } from '../config';
 
@@ -10,5 +11,5 @@ const ddbDocClient = DynamoDBDocumentClient.from(
   new DynamoDBClient({ region }),
 );
 
-export { ddbDocClient, QueryCommand, PutCommand };
+export { ddbDocClient, QueryCommand, PutCommand, DeleteCommand };
 

@@ -1,5 +1,10 @@
 import { randomUUID } from 'crypto';
-import { ddbDocClient, PutCommand, QueryCommand } from '../lib/providers/db';
+import {
+  ddbDocClient,
+  DeleteCommand,
+  PutCommand,
+  QueryCommand,
+} from '../lib/providers/db';
 import {
   translateClient,
   TranslateTextCommand,
@@ -52,6 +57,21 @@ class TranslateService {
     if (!res) throw new Error('Failed to add fav translate');
 
     return fav;
+  }
+
+  public async removeFavoriteByUser(id: string) {
+    const res = await ddbDocClient.send(
+      new DeleteCommand({
+        TableName: process.env.FAV_TRANSLATE_TABLE,
+        Key: {
+          id,
+        },
+      }),
+    );
+
+    if (!res) throw new Error('Failed to remove fav translate');
+
+    return id;
   }
 }
 
